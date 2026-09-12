@@ -26,9 +26,9 @@ resources/
 `main.py` exposes subcommands. Run one of these:
 
 ```bash
-uv run main.py quiz
-uv run main.py analyze <draft_id>
-uv run main.py top-cards --set="msh" --rarities=common
+uv run main.py play/quiz
+uv run main.py play/analyze <draft_id>
+uv run main.py collection/top-cards --set="msh" --rarities=common
 ```
 
 ### Quiz mode
