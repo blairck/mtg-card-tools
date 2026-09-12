@@ -72,6 +72,23 @@ For fetch-only workflows, you can also run the helper module directly:
 uv run -m src.fetch_draft <draft_id>
 ```
 
+### Local project tickets
+
+The repository includes Simple Projects, an offline ticket and Python-docstring
+search tool. It stores tickets in the ignored `.simple-projects.db` file at the
+repository root and searches `src/` and `tests/` lazily.
+
+```bash
+uv run simple-projects
+```
+
+If the command exists but reports `No module named 'simple_projects'`, rebuild
+the local project installation:
+
+```bash
+uv sync --reinstall-package mtg-card-tools
+```
+
 ## Configuration
 
 Most runtime settings live in `config.py`:
@@ -134,7 +151,8 @@ mtg-card-tools/
 │   ├── fetch_draft.py
 │   ├── game_logic.py
 │   ├── html_report.py
-│   └── quiz.py
+│   ├── quiz.py
+│   └── simple_projects/
 ├── tests/
 └── resources/
 ```

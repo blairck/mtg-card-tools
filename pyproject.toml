@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Chris Blair", email = "chris.blair36@gmail.com" }
 ]
-requires-python = ">=3.14"
+requires-python = ">=3.13"
 dependencies = [
     "dotenv>=0.9.9",
     "pytest>=9.1.1",
@@ -16,7 +16,14 @@ dependencies = [
 
 [project.scripts]
 mtg-card-tools = "mtg_card_tools:main"
+simple-projects = "simple_projects.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.12.10,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = ["mtg_card_tools", "simple_projects"]
+
+[tool.uv]
+python-preference = "only-managed"
