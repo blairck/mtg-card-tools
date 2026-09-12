@@ -14,6 +14,12 @@ dependencies = [
     "termcolor>=3.3.0",
 ]
 
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.0",
+    "ruff>=0.14.13",
+]
+
 [project.scripts]
 mtg-card-tools = "mtg_card_tools:main"
 simple-projects = "simple_projects.cli:main"
@@ -27,3 +33,9 @@ module-name = ["mtg_card_tools", "simple_projects"]
 
 [tool.uv]
 python-preference = "only-managed"
+
+[tool.ruff.lint]
+select = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

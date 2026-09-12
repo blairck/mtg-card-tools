@@ -12,6 +12,8 @@ STATUSES = frozenset({"open", "closed", "cancelled", "active"})
 
 @dataclass(frozen=True)
 class Ticket:
+    """Represent a locally stored ticket."""
+
     id: int
     title: str
     description: str
@@ -22,6 +24,8 @@ class Ticket:
 
 @dataclass(frozen=True)
 class Comment:
+    """Represent a comment attached to a ticket."""
+
     id: int
     ticket_id: int
     author: str
@@ -30,10 +34,14 @@ class Comment:
 
 
 class TicketStore:
+    """Persist and query repository-local tickets in SQLite."""
+
     def __init__(self, repository_root: Path) -> None:
+        """Initialize the store using the repository's local database path."""
         self.database_path = repository_root / ".simple-projects.db"
 
     def initialize(self) -> None:
+        """Create the ticket database schema when it does not already exist."""
         with self._connect() as connection:
             connection.executescript(
                 """
@@ -59,6 +67,7 @@ class TicketStore:
             )
 
     def create_ticket(self, title: str, description: str, status: str, tags: str) -> Ticket:
+        """Create and return a ticket with normalized tags."""
         self._validate_status(status)
         normalized_tags = self.normalize_tags(tags)
         with self._connect() as connection:
@@ -72,6 +81,7 @@ class TicketStore:
         return self.get_ticket(cursor.lastrowid)
 
     def get_ticket(self, ticket_id: int) -> Ticket:
+        """Return the ticket identified by its SQLite primary key."""
         with self._connect() as connection:
             row = connection.execute(
                 "SELECT id, title, description, status, tags, updated_at FROM tickets WHERE id = ?",
@@ -82,6 +92,7 @@ class TicketStore:
         return self._ticket_from_row(row)
 
     def active_ticket(self) -> Ticket | None:
+        """Return the active ticket, if the repository has one."""
         with self._connect() as connection:
             row = connection.execute(
                 "SELECT id, title, description, status, tags, updated_at FROM tickets WHERE status = 'active'"
@@ -89,6 +100,7 @@ class TicketStore:
         return self._ticket_from_row(row) if row else None
 
     def update_status(self, ticket_id: int, status: str) -> Ticket:
+        """Set a ticket status and return the updated ticket."""
         self._validate_status(status)
         with self._connect() as connection:
             try:
@@ -103,6 +115,7 @@ class TicketStore:
         return self.get_ticket(ticket_id)
 
     def add_comment(self, ticket_id: int, body: str) -> Comment:
+        """Add a comment from Me and refresh the ticket update time."""
         with self._connect() as connection:
             if connection.execute("SELECT 1 FROM tickets WHERE id = ?", (ticket_id,)).fetchone() is None:
                 raise ValueError(f"Ticket {ticket_id} does not exist.")
@@ -118,12 +131,14 @@ class TicketStore:
         return Comment(*row)
 
     def recent_tickets(self, limit: int = 5) -> list[Ticket]:
+        """Return the most recently updated tickets."""
         return self._list_tickets(
             "SELECT id, title, description, status, tags, updated_at FROM tickets ORDER BY updated_at DESC, id DESC LIMIT ?",
             (limit,),
         )
 
     def search_tickets(self, query: str, limit: int = 5) -> list[Ticket]:
+        """Return recent tickets whose text or tags match a query."""
         term = f"%{query.strip()}%"
         return self._list_tickets(
             """SELECT id, title, description, status, tags, updated_at FROM tickets
@@ -134,6 +149,7 @@ class TicketStore:
 
     @staticmethod
     def normalize_tags(tags: str) -> tuple[str, ...]:
+        """Return unique, sorted, lowercase tags parsed from comma-separated text."""
         return tuple(sorted({tag.strip().lower() for tag in tags.split(",") if tag.strip()}))
 
     def _list_tickets(self, query: str, parameters: tuple[object, ...]) -> list[Ticket]:

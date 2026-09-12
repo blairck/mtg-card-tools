@@ -16,6 +16,8 @@ CAMEL_CASE_PATTERN = re.compile(r"(?<=[a-z0-9])(?=[A-Z])")
 
 @dataclass(frozen=True)
 class CodeResult:
+    """Describe a documented Python entity matching a code search."""
+
     name: str
     path: Path
     line: int
@@ -23,10 +25,12 @@ class CodeResult:
 
     @property
     def vscode_link(self) -> str:
+        """Return a VS Code deep link to the entity's source location."""
         return f"vscode://file/{quote(str(self.path.resolve()))}:{self.line}:1"
 
 
 def search_code(repository_root: Path, query: str, directories: tuple[Path, ...] | None = None, limit: int = 5) -> list[CodeResult]:
+    """Return the highest-scoring documented entities for a query."""
     search_directories = directories or (repository_root / "src", repository_root / "tests")
     query_words = Counter(word.lower() for word in WORD_PATTERN.findall(query))
     results: list[CodeResult] = []

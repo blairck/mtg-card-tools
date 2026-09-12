@@ -10,6 +10,7 @@ from .tickets import STATUSES, Ticket, TicketStore
 
 
 def main() -> None:
+    """Run the interactive Simple Projects command-line interface."""
     parser = argparse.ArgumentParser(description="Offline tickets and Python code search.")
     parser.add_argument("--root", type=Path, default=Path.cwd(), help="Repository to manage (default: current directory).")
     arguments = parser.parse_args()
