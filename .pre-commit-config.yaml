@@ -6,4 +6,4 @@ repos:
         entry: uv run ruff check
         language: system
         types: [python]
-        files: ^src/simple_projects/
+        files: ^src/simple_project/

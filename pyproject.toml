@@ -22,14 +22,16 @@ dev = [
 
 [project.scripts]
 mtg-card-tools = "mtg_card_tools:main"
-simple-projects = "simple_projects.cli:main"
+simple-project = "simple_project.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.12.10,<0.13.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = ["mtg_card_tools", "simple_projects"]
+module-name = ["mtg_card_tools", "simple_project"]
+data = { purelib = "src" }
+wheel-exclude = ["*.egg-info"]
 
 [tool.uv]
 python-preference = "only-managed"

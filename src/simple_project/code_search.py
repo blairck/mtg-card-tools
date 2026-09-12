@@ -21,6 +21,8 @@ class CodeResult:
     name: str
     path: Path
     line: int
+    docstring: str
+    entity_type: str
     score: int
 
     @property
@@ -54,8 +56,25 @@ def _score_file(source_file: Path, query_words: Counter[str]) -> list[CodeResult
         words = Counter(word.lower() for word in WORD_PATTERN.findall(f"{searchable_name} {docstring}"))
         score = sum(count * words[word] for word, count in query_words.items())
         if score:
-            results.append(CodeResult(name, source_file, getattr(node, "lineno", 1), score))
+            results.append(
+                CodeResult(
+                    name,
+                    source_file,
+                    getattr(node, "lineno", 1),
+                    docstring,
+                    _entity_type(node),
+                    score,
+                )
+            )
     return results
+
+
+def _entity_type(node: ast.AST) -> str:
+    if isinstance(node, ast.Module):
+        return "Python module"
+    if isinstance(node, ast.ClassDef):
+        return "Python class"
+    return "Python function"
 
 
 def _documented_entities(tree: ast.Module) -> list[tuple[ast.AST, str]]:

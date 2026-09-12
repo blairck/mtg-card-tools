@@ -74,15 +74,15 @@ uv run -m src.fetch_draft <draft_id>
 
 ### Local project tickets
 
-The repository includes Simple Projects, an offline ticket and Python-docstring
-search tool. It stores tickets in the ignored `.simple-projects.db` file at the
+The repository includes Simple Project, an offline ticket and Python-docstring
+search tool. It stores tickets in the ignored `.simple-project.db` file at the
 repository root and searches `src/` and `tests/` lazily.
 
 ```bash
-uv run simple-projects
+uv run simple-project
 ```
 
-If the command exists but reports `No module named 'simple_projects'`, rebuild
+If the command exists but reports `No module named 'simple_project'`, rebuild
 the local project installation:
 
 ```bash
@@ -152,7 +152,7 @@ mtg-card-tools/
 │   ├── game_logic.py
 │   ├── html_report.py
 │   ├── quiz.py
-│   └── simple_projects/
+│   └── simple_project/
 ├── tests/
 └── resources/
 ```
